@@ -1,0 +1,143 @@
+<template>
+  <!-- 20 s YouTube end screen. make_outro.py fills the {{…}} fields from channel.json and room_grading.attr.
+       The two WATCH NEXT frames and the round face are where he places YouTube's end-screen elements in Studio
+       (two video/playlist elements + the subscribe element) — keep them clear of text. No music: SFX only. -->
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      font-family: "Oswald", sans-serif;
+      color: #ffffff;
+    }
+    #ou-room {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      object-fit: cover;
+    }
+    #ou-shade {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 45%, rgba(70, 60, 120, 0.2), rgba(8, 8, 14, 0.62) 72%);
+    }
+    .ou-glow {
+      position: absolute;
+      width: 760px;
+      height: 760px;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.32;
+    }
+    #ou-glow-a {
+      left: -160px;
+      top: 120px;
+      background: #4a6bff;
+    }
+    #ou-glow-b {
+      left: 1180px;
+      top: 300px;
+      background: #a05cff;
+    }
+    #ou-left {
+      position: absolute;
+      left: 120px;
+      top: 230px;
+      width: 760px;
+    }
+    #ou-face {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), 0 0 0 10px rgba(142, 125, 255, 0.25);
+    }
+    #ou-name {
+      font-size: 72px;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1.02;
+      margin-top: 30px;
+    }
+    #ou-line {
+      font-size: 30px;
+      letter-spacing: 0.08em;
+      color: #c8c8d8;
+      margin-top: 10px;
+    }
+    #ou-cta {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 14px 44px 16px;
+      border-radius: 999px;
+      font-size: 46px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      background: linear-gradient(90deg, #4aa3ff, #8e7dff 55%, #c06cff);
+      box-shadow: 0 18px 44px rgba(90, 90, 255, 0.35);
+    }
+    #ou-kicker {
+      position: absolute;
+      left: 1080px;
+      top: 112px;
+      font-size: 30px;
+      letter-spacing: 0.32em;
+      color: #b9b9c8;
+    }
+    .ou-slot {
+      position: absolute;
+      left: 1080px;
+      width: 720px;
+      height: 405px;
+      border-radius: 22px;
+      background: rgba(28, 28, 36, 0.45);
+      border: 2px dashed rgba(255, 255, 255, 0.28);
+      backdrop-filter: blur(14px);
+    }
+    #ou-slot-a {
+      top: 170px;
+    }
+    #ou-slot-b {
+      top: 605px;
+    }
+    #ou-face, #ou-name, #ou-line, #ou-cta, #ou-kicker, .ou-slot {
+      opacity: 0;
+    }
+  </style>
+  <div id="root" data-composition-id="outro" data-width="1920" data-height="1080">
+    <img id="ou-room" data-color-grading="{{GRADING}}" src="assets/room.jpg" alt="" />
+    <div id="ou-shade"></div>
+    <div id="ou-glow-a" class="ou-glow"></div>
+    <div id="ou-glow-b" class="ou-glow"></div>
+    <div id="ou-left">
+      <img id="ou-face" src="assets/face.jpg" alt="" />
+      <div id="ou-name">{{NAME}}</div>
+      <div id="ou-line">{{LINE}}</div>
+      <div id="ou-cta">{{CTA}}</div>
+    </div>
+    <div id="ou-kicker">{{OUTRO_LINE}}</div>
+    <div id="ou-slot-a" class="ou-slot"></div>
+    <div id="ou-slot-b" class="ou-slot"></div>
+    <audio id="ou-sw" class="clip" src="assets/sfx/whoosh.mp3" data-start="0" data-duration="0.8" data-track-index="1" data-volume="0.25"></audio>
+    <audio id="ou-hit" class="clip" src="assets/sfx/pop.mp3" data-start="1.05" data-duration="0.6" data-track-index="2" data-volume="0.4"></audio>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // ambient life for 20 s so the frame never looks frozen
+    tl.fromTo("#ou-room", { scale: 1.0 }, { scale: 1.06, duration: 20, ease: "none" }, 0);
+    tl.fromTo("#ou-glow-a", { x: 0, y: 0 }, { x: 140, y: -60, duration: 20, ease: "sine.inOut" }, 0);
+    tl.fromTo("#ou-glow-b", { x: 0, y: 0 }, { x: -120, y: 80, duration: 20, ease: "sine.inOut" }, 0);
+    tl.fromTo("#ou-face", { opacity: 0, scale: 0.8, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.5, ease: "back.out(1.5)" }, 0.15);
+    tl.fromTo("#ou-name", { opacity: 0, y: 30, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "expo.out" }, 0.4);
+    tl.fromTo("#ou-line", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power4.out" }, 0.65);
+    tl.fromTo("#ou-cta", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(1.8)" }, 1.1);
+    tl.fromTo("#ou-kicker", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power4.out" }, 0.5);
+    tl.fromTo(".ou-slot", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: "expo.out", stagger: 0.15 }, 0.6);
+    tl.to("#ou-cta", { scale: 1.05, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 13 }, 2.0);
+    tl.to("#root", { opacity: 0, duration: 0.8, ease: "power2.in" }, 19.2);
+    window.__timelines["outro"] = tl;
+  </script>
+</template>

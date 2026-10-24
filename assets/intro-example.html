@@ -1,0 +1,471 @@
+<template>
+  <style>
+    @font-face {
+      font-family: "Bangla";
+      src: local("Kohinoor Bangla Semibold"), local("KohinoorBangla-Semibold");
+      font-weight: 600;
+    }
+    @font-face {
+      font-family: "Bangla";
+      src: local("Kohinoor Bangla Bold"), local("KohinoorBangla-Bold");
+      font-weight: 700;
+    }
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      color: #ffffff;
+      font-family: "Oswald", sans-serif;
+    }
+    /* blurred, darkened room — the reference's ground */
+    #in-room {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      object-fit: cover;
+    }
+    #in-shade {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 40%, rgba(70, 60, 120, 0.18), rgba(8, 8, 14, 0.55) 70%);
+    }
+    .win {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      transform-origin: 960px 540px;
+    }
+    #in-cam-wrap {
+      z-index: 6;
+      filter: drop-shadow(0 24px 40px rgba(0, 0, 0, 0.45));
+    }
+    #in-cam-inner {
+      position: absolute;
+      inset: 0;
+      transform-origin: 960px 420px;
+    }
+    #in-cam {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      object-fit: cover;
+    }
+    #in-scr-wrap {
+      z-index: 4;
+      left: 60px;
+      top: 168px;
+      width: 1600px;
+      height: 829px;
+      border-radius: 22px;
+      overflow: hidden;
+      transform-origin: 800px 414px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+    #in-scr-inner {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1600px;
+      height: 829px;
+      transform-origin: 0 0;
+    }
+    #in-scr {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1600px;
+      height: 829px;
+      object-fit: cover;
+    }
+    /* type */
+    .bn {
+      font-family: "Bangla", sans-serif;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+    .grad {
+      background: linear-gradient(90deg, #4aa3ff 0%, #8e7dff 55%, #c06cff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .glass {
+      position: absolute;
+      background: rgba(28, 28, 36, 0.52);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 22px;
+      backdrop-filter: blur(18px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+    .head {
+      text-transform: uppercase;
+      font-weight: 700;
+      line-height: 1.02;
+      letter-spacing: 0.005em;
+    }
+    .z {
+      z-index: 10;
+    }
+    /* I1 */
+    #in-c1 {
+      left: 70px;
+      top: 70px;
+      padding: 26px 40px 30px;
+    }
+    #in-c1 .bn {
+      font-size: 46px;
+      color: #d9d9e6;
+    }
+    #in-c1 .head {
+      font-size: 104px;
+    }
+    .chip {
+      position: absolute;
+      padding: 14px 34px 16px;
+      font-size: 88px;
+      font-weight: 700;
+      border-radius: 999px;
+      line-height: 1;
+    }
+    #in-usd1 {
+      left: 70px;
+      top: 470px;
+    }
+    #in-usd2 {
+      left: 70px;
+      top: 610px;
+    }
+    /* I2 */
+    #in-h2 {
+      position: absolute;
+      left: 90px;
+      top: 228px;
+      width: 760px;
+    }
+    #in-h2a,
+    #in-h2b {
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 62px;
+      white-space: nowrap;
+    }
+    #in-h2b {
+      font-size: 52px !important;
+    }
+    #in-h2b .head {
+      font-size: 72px;
+    }
+    .pill {
+      position: absolute;
+      left: 120px;
+      width: 470px;
+      height: 74px;
+      padding-left: 64px;
+      font-size: 38px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 72px;
+      border-radius: 18px;
+    }
+    .pill::before {
+      content: "";
+      position: absolute;
+      left: 28px;
+      top: 28px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--dot);
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.06);
+    }
+    #in-arrow {
+      position: absolute;
+      left: 151px;
+      top: 452px;
+      width: 4px;
+      height: 360px;
+      background: linear-gradient(#4aa3ff, #c06cff);
+      transform-origin: 50% 0;
+      border-radius: 2px;
+    }
+    /* I3 / I5 / I6 */
+    .tl-card {
+      left: 70px;
+      top: 70px;
+      padding: 24px 40px 30px;
+    }
+    .tl-card .head {
+      font-size: 104px;
+    }
+    #in-ok {
+      left: 70px;
+      top: 420px;
+      font-size: 44px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 18px 34px 18px 76px;
+      border-radius: 999px;
+    }
+    #in-ok::before {
+      content: "✓";
+      position: absolute;
+      left: 26px;
+      top: 14px;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #2fd27a;
+      color: #08130c;
+      font-size: 28px;
+      line-height: 38px;
+      text-align: center;
+      font-weight: 700;
+    }
+    #in-sub6 {
+      left: 70px;
+      top: 420px;
+      font-size: 46px;
+      padding: 20px 34px 24px;
+      border-radius: 20px;
+    }
+    /* I4 */
+    #in-h4 {
+      position: absolute;
+      left: 64px;
+      top: 42px;
+      white-space: nowrap;
+    }
+    #in-h4 .head {
+      font-size: 92px;
+      display: inline-block;
+    }
+    #in-h4 .bn {
+      font-size: 52px;
+      margin-left: 22px;
+      display: inline-block;
+      vertical-align: 14px;
+    }
+    /* I7 */
+    #in-h7 {
+      position: absolute;
+      left: 100px;
+      top: 300px;
+      width: 700px;
+    }
+    #in-h7 .bn {
+      font-size: 64px;
+      line-height: 1.35;
+    }
+    #in-h7 .head {
+      font-size: 220px;
+      line-height: 0.95;
+    }
+    /* title */
+    #in-title {
+      position: absolute;
+      left: 0;
+      top: 330px;
+      width: 1920px;
+      text-align: center;
+    }
+    #in-t-kicker {
+      font-size: 40px;
+      letter-spacing: 0.32em;
+      font-weight: 500;
+      color: #b9b9c8;
+    }
+    #in-t-main {
+      font-size: 196px;
+      line-height: 1.05;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+    #in-t-sub {
+      font-size: 44px;
+      letter-spacing: 0.42em;
+      font-weight: 500;
+      color: #cfcfe0;
+      margin-top: 18px;
+    }
+    #in-t-main span {
+      display: inline-block;
+    }
+    /* hidden until their beat */
+    #in-usd1, #in-usd2, #in-h2, #in-h2b, .pill, #in-arrow, #in-c3, #in-ok, #in-h4, #in-c5, #in-c6,
+    #in-sub6, #in-h7, #in-live, #in-title, #in-scr-wrap {
+      opacity: 0;
+    }
+  </style>
+  <div data-hf-id="hf-ypfn" id="root" data-composition-id="intro" data-width="1920" data-height="1080">
+    <img data-color-grading="{&quot;preset&quot;:null,&quot;intensity&quot;:1,&quot;adjust&quot;:{&quot;exposure&quot;:-0.55,&quot;contrast&quot;:0,&quot;highlights&quot;:0,&quot;shadows&quot;:0,&quot;whites&quot;:0,&quot;blacks&quot;:0,&quot;temperature&quot;:0,&quot;tint&quot;:0,&quot;vibrance&quot;:0,&quot;saturation&quot;:-0.25},&quot;details&quot;:{&quot;vignette&quot;:0,&quot;vignetteMidpoint&quot;:0.5,&quot;vignetteRoundness&quot;:0,&quot;vignetteFeather&quot;:0.65,&quot;grain&quot;:0,&quot;grainSize&quot;:0.25,&quot;grainRoughness&quot;:0.5},&quot;effects&quot;:{&quot;blur&quot;:0.85,&quot;pixelate&quot;:0,&quot;chromaBleed&quot;:0,&quot;tapeDamage&quot;:0,&quot;tapeTracking&quot;:0,&quot;tapeNoise&quot;:1,&quot;tapeSpeed&quot;:0.5,&quot;filmArtifacts&quot;:0,&quot;halftone&quot;:0,&quot;halftoneSize&quot;:0,&quot;twoInkPrint&quot;:0,&quot;twoInkPrintSize&quot;:0,&quot;ascii&quot;:0,&quot;asciiSize&quot;:0.06578947368421052,&quot;asciiInvert&quot;:0,&quot;asciiStyle&quot;:0,&quot;asciiColor&quot;:1,&quot;asciiRotation&quot;:0,&quot;dither&quot;:0,&quot;ditherSize&quot;:0,&quot;bloom&quot;:0,&quot;bloomRadius&quot;:8,&quot;monoScreen&quot;:0,&quot;monoScreenSize&quot;:0,&quot;monoScreenAngle&quot;:0,&quot;monoScreenSpread&quot;:0,&quot;monoScreenShape&quot;:0,&quot;monoScreenInvert&quot;:0,&quot;scanlines&quot;:0,&quot;scanlineCount&quot;:0,&quot;scanlineSoftness&quot;:0,&quot;chromaticAberration&quot;:0,&quot;chromaticAngle&quot;:0,&quot;crtCurvature&quot;:0,&quot;digitalGlitch&quot;:0,&quot;digitalGlitchColorSplit&quot;:0,&quot;digitalGlitchLineTear&quot;:0,&quot;digitalGlitchPixelate&quot;:0,&quot;digitalGlitchBlockAmount&quot;:0,&quot;digitalGlitchBlockDisplacement&quot;:0,&quot;digitalGlitchBlockOpacity&quot;:0,&quot;digitalGlitchSpeed&quot;:0,&quot;engraving&quot;:0,&quot;engravingSpacing&quot;:0.4117647058823529,&quot;engravingMinThickness&quot;:0.2,&quot;engravingMaxThickness&quot;:0.4571428571428572,&quot;engravingAngle&quot;:0.25,&quot;engravingContrast&quot;:0.4666666666666667,&quot;engravingSharpness&quot;:0.59,&quot;engravingWave&quot;:0.2,&quot;engravingWaveFrequency&quot;:0.2222222222222222,&quot;crosshatch&quot;:0,&quot;crosshatchSpacing&quot;:0.28,&quot;crosshatchThickness&quot;:0.25,&quot;crosshatchAngle&quot;:0.25,&quot;crosshatchContrast&quot;:0.3333333333333333,&quot;crosshatchEdges&quot;:0.5,&quot;crosshatchLineWeight&quot;:0,&quot;crosshatchWave&quot;:0.33,&quot;crosshatchWaveFrequency&quot;:0.2222222222222222,&quot;kuwahara&quot;:0,&quot;kuwaharaRadius&quot;:0.14285714285714285,&quot;kuwaharaSharpness&quot;:0.3125,&quot;kuwaharaSaturation&quot;:0.5},&quot;lut&quot;:null,&quot;colorSpace&quot;:&quot;rec709&quot;}" data-hf-id="hf-0ctd" id="in-room" src="assets/room.jpg" alt="">
+    <div data-hf-id="hf-cxco" id="in-shade"></div>
+
+    <!-- footage -->
+    <div data-hf-id="hf-8yxr" id="in-scr-wrap" class="win">
+      <div data-hf-id="hf-u4c4" id="in-scr-inner">
+        <video data-hf-id="hf-y1kv" id="in-scr" class="clip" src="assets/intro_screen.mp4" data-start="19.68" data-duration="8.64" data-track-index="2" muted playsinline></video>
+      </div>
+    </div>
+    <div data-hf-id="hf-iras" id="in-cam-wrap" class="win">
+      <div data-hf-id="hf-k8np" id="in-cam-inner">
+        <video data-hf-id="hf-0yyn" id="in-cam" class="clip" src="assets/intro_cam.mp4" data-start="0" data-duration="40.28" data-track-index="1" muted playsinline></video>
+      </div>
+    </div>
+    <audio data-hf-id="hf-q4h3" id="in-voice" class="clip" src="assets/intro_voice.wav" data-start="0" data-duration="40.28" data-track-index="3" data-volume="1"></audio>
+
+    <!-- I1: two projects confirmed -->
+    <div data-hf-id="hf-gmga" id="in-c1" class="glass z">
+      <div data-hf-id="hf-bpz6" class="bn">গতকাল</div>
+      <div data-hf-id="hf-x2v6" class="head">২টা Project</div>
+      <div data-hf-id="hf-h9m3" class="head grad">Confirmed</div>
+    </div>
+    <div data-hf-id="hf-5bsx" id="in-usd1" class="glass chip z"><span data-hf-id="hf-k4e8" class="grad">$1,200</span></div>
+    <div data-hf-id="hf-99wy" id="in-usd2" class="glass chip z"><span data-hf-id="hf-mfqu" class="grad">$1,000</span></div>
+
+    <!-- I2: audit to signed proposal, with agentic AI -->
+    <div data-hf-id="hf-riwo" id="in-h2" class="z">
+      <div data-hf-id="hf-w0d1" id="in-h2a" class="bn">Audit থেকে Proposal Sign</div>
+      <div data-hf-id="hf-t7eh" id="in-h2b" class="bn">সবকিছু <span data-hf-id="hf-78u8" class="head grad">Agentic AI</span> দিয়ে</div>
+    </div>
+    <div data-hf-id="hf-ereh" id="in-arrow" class="z"></div>
+    <div data-hf-id="hf-a3bp" id="in-p1" class="glass pill z" style="top: 380px; --dot: #4aa3ff">Audit Report</div>
+    <div data-hf-id="hf-ez0j" id="in-p2" class="glass pill z" style="top: 486px; --dot: #7f8cff">Event Mapping</div>
+    <div data-hf-id="hf-7167" id="in-p3" class="glass pill z" style="top: 592px; --dot: #a77bff">Proposal</div>
+    <div data-hf-id="hf-qswt" id="in-p4" class="glass pill z" style="top: 698px; --dot: #2fd27a">Client Signed</div>
+
+    <!-- I3: work completed -->
+    <div data-hf-id="hf-lmr1" id="in-c3" class="glass tl-card z">
+      <div data-hf-id="hf-vlcr" class="head">Work</div>
+      <div data-hf-id="hf-oejr" class="head grad">Completed</div>
+    </div>
+    <div data-hf-id="hf-s9xu" id="in-ok" class="glass z">CLIENT CONFIRMED</div>
+
+    <!-- I4: the 9-minute audit -->
+    <div data-hf-id="hf-jmom" id="in-h4" class="z"><span data-hf-id="hf-wcaz" class="head">AI Audit · <span data-hf-id="hf-6sok" class="grad">9 Min</span></span><span data-hf-id="hf-90sw" class="bn">পুরো website check</span></div>
+
+    <!-- I5 / I6: AI works like me, like a brain -->
+    <div data-hf-id="hf-64yz" id="in-c5" class="glass tl-card z">
+      <div data-hf-id="hf-h6xa" class="head">AI Works</div>
+      <div data-hf-id="hf-qvad" class="head grad">Like Me</div>
+    </div>
+    <div data-hf-id="hf-xh34" id="in-c6" class="glass tl-card z">
+      <div data-hf-id="hf-yafj" class="head">It's Like A</div>
+      <div data-hf-id="hf-g8fy" class="head grad">Brain</div>
+    </div>
+    <div data-hf-id="hf-i3rk" id="in-sub6" class="glass bn z">যত train করবেন, তত ভালো perform করবে</div>
+
+    <!-- I7: live -->
+    <div data-hf-id="hf-fokl" id="in-h7" class="z">
+      <div data-hf-id="hf-bojp" class="bn">কথা দিয়েছিলাম, আজকে দেখাবো</div>
+      <div data-hf-id="hf-upn2" id="in-live" class="head grad">Live</div>
+    </div>
+
+    <!-- title -->
+    <div data-hf-id="hf-cibc" id="in-title" class="z">
+      <div data-hf-id="hf-ii2e" id="in-t-kicker">IN2 FITNESS · KSA</div>
+      <div data-hf-id="hf-a0hc" id="in-t-main" class="head"><span data-hf-id="hf-j2tr" id="in-t-w1" class="grad">Agentic</span> <span data-hf-id="hf-bu83" id="in-t-w2">Tracking</span></div>
+      <div data-hf-id="hf-444x" id="in-t-sub">LIVE PROJECT</div>
+    </div>
+
+    <!-- sound on visible moves -->
+    <audio data-hf-id="hf-wtbk" id="in-sfx-c1" class="clip" src="assets/sfx/pop.mp3" data-start="2.54" data-duration="0.6" data-track-index="4" data-volume="0.4"></audio>
+    <audio data-hf-id="hf-soe2" id="in-sfx-c2" class="clip" src="assets/sfx/pop.mp3" data-start="4.14" data-duration="0.6" data-track-index="5" data-volume="0.4"></audio>
+    <audio data-hf-id="hf-e7cp" id="in-sfx-w1" class="clip" src="assets/sfx/whoosh.mp3" data-start="6.07" data-duration="0.57" data-track-index="4" data-volume="0.35"></audio>
+    <audio data-hf-id="hf-re51" id="in-sfx-w2" class="clip" src="assets/sfx/whoosh.mp3" data-start="19.55" data-duration="0.57" data-track-index="5" data-volume="0.35"></audio>
+    <audio data-hf-id="hf-nyjp" id="in-sfx-ok" class="clip" src="assets/sfx/pop.mp3" data-start="16.98" data-duration="0.6" data-track-index="4" data-volume="0.4"></audio>
+    <audio data-hf-id="hf-d3sk" id="in-sfx-w3" class="clip" src="assets/sfx/whoosh.mp3" data-start="28.15" data-duration="0.57" data-track-index="4" data-volume="0.3"></audio>
+    <audio data-hf-id="hf-psgf" id="in-sfx-w4" class="clip" src="assets/sfx/whoosh.mp3" data-start="35.87" data-duration="0.57" data-track-index="5" data-volume="0.3"></audio>
+    <audio data-hf-id="hf-9qht" id="in-sfx-hit" class="clip" src="assets/sfx/impact-bass-1.mp3" data-start="40.31" data-duration="2.1" data-track-index="7" data-volume="0.3" data-fade-out="1"></audio>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+
+    // camera layouts: the whole frame scaled into a rounded card
+    const CAM = {
+      full: { x: 0, y: 0, scale: 1, clipPath: "inset(0px 0px 0px 0px round 0px)" },
+      cardR: { x: 391, y: 0, scale: 0.53, clipPath: "inset(0px 0px 0px 0px round 72px)" },
+      mini: { x: 680, y: 365, scale: 0.25, clipPath: "inset(0px 0px 0px 0px round 110px)" },
+    };
+    const move = (from, to, at, d, ease) =>
+      tl.fromTo("#in-cam-wrap", { ...from }, { ...to, duration: d, ease, immediateRender: false }, at);
+    const blurIn = (sel, at, d = 0.18) =>
+      tl.fromTo(sel, { opacity: 0, filter: "blur(10px)" }, { opacity: 1, filter: "blur(0px)", duration: d, ease: "power4.out" }, at);
+    const blurOut = (sel, at, d = 0.16) =>
+      tl.to(sel, { opacity: 0, filter: "blur(10px)", duration: d, ease: "power2.in" }, at);
+    const popIn = (sel, at) =>
+      tl.fromTo(sel, { opacity: 0, scale: 0.8, filter: "blur(8px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.45, ease: "back.out(1.6)" }, at);
+
+    tl.set("#in-cam-wrap", CAM.full, 0);
+    tl.set("#in-cam-inner", { scale: 1 }, 0);
+
+    // I1 0–6.16: the card is up on frame 0 (thumbnail), the two amounts pop as he says them
+    popIn("#in-usd1", 2.64);
+    popIn("#in-usd2", 4.24);
+    blurOut(["#in-c1", "#in-usd1", "#in-usd2"], 6.02);
+
+    // I2 6.16–14.76: camera to the right card, the workflow builds on the left
+    move(CAM.full, CAM.cardR, 6.2, 0.6, "expo.out");
+    blurIn("#in-h2", 6.34);
+    tl.fromTo("#in-arrow", { opacity: 1, scaleY: 0 }, { scaleY: 1, duration: 3.2, ease: "power1.inOut", immediateRender: false }, 6.64);
+    ["#in-p1", "#in-p2", "#in-p3", "#in-p4"].forEach((p, i) =>
+      tl.fromTo(p, { opacity: 0, x: -30, filter: "blur(6px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.4, ease: "expo.out" }, 6.64 + i * 0.95),
+    );
+    blurOut("#in-h2a", 10.94);
+    blurIn("#in-h2b", 11.09);
+    blurOut(["#in-h2b", ".pill", "#in-arrow"], 14.62);
+
+    // I3 14.76–19.60: back to full face
+    move(CAM.cardR, CAM.full, 14.84, 0.5, "expo.out");
+    blurIn("#in-c3", 15.08);
+    popIn("#in-ok", 17.08);
+    blurOut(["#in-c3", "#in-ok"], 19.5);
+
+    // I4 19.60–28.16: the real audit report; camera shrinks into a corner card
+    move(CAM.full, CAM.mini, 19.68, 0.55, "expo.out");
+    tl.fromTo("#in-scr-wrap", { opacity: 0, scale: 0.94, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "expo.out", immediateRender: false }, 19.68);
+    tl.set("#in-scr-inner", { x: 0, y: 0, scale: 1 }, 0);
+    blurIn("#in-h4", 20.12);
+    // zoom to "Worked for 9m" (43%, 14%), then to the critical gap (54%, 50%)
+    const zoomTo = (fx, fy, s, at, d) =>
+      tl.to("#in-scr-inner", { x: 800 - s * fx * 1600, y: 414 - s * fy * 829, scale: s, duration: d, ease: "power2.inOut" }, at);
+    zoomTo(0.47, 0.2, 2.1, 22.32, 0.9);
+    zoomTo(0.58, 0.5, 1.7, 25.72, 0.9);
+    blurOut(["#in-h4", "#in-scr-wrap"], 28.1);
+
+    // I5 28.16–30.80 / I6 30.80–35.64: full face, punch-in on the jump cut
+    move(CAM.mini, CAM.full, 28.32, 0.5, "expo.out");
+    blurIn("#in-c5", 28.72);
+    blurOut("#in-c5", 30.94);
+    tl.set("#in-cam-inner", { scale: 1.12 }, 31.12);
+    blurIn("#in-c6", 31.36);
+    blurIn("#in-sub6", 32.96, 0.22);
+    blurOut(["#in-c6", "#in-sub6"], 35.82);
+    tl.set("#in-cam-inner", { scale: 1 }, 36.04);
+
+    // I7 35.64–39.84: card right, LIVE lands as he says it
+    move(CAM.full, CAM.cardR, 36.04, 0.6, "expo.out");
+    blurIn("#in-h7", 36.3);
+    tl.fromTo("#in-live", { opacity: 0, scale: 1.3, filter: "blur(14px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.4, ease: "expo.out" }, 38.6);
+    blurOut("#in-h7", 40.0);
+    tl.to("#in-cam-wrap", { scale: 0.42, opacity: 0, filter: "blur(12px)", duration: 0.4, ease: "power3.in" }, 39.9);
+
+    // title 39.84–44.24
+    tl.fromTo("#in-title", { opacity: 0 }, { opacity: 1, duration: 0.01 }, 40.3);
+    tl.fromTo("#in-t-kicker", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power4.out" }, 40.34);
+    tl.fromTo("#in-t-w1", { opacity: 0, y: 40, filter: "blur(12px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 40.44);
+    tl.fromTo("#in-t-w2", { opacity: 0, y: 40, filter: "blur(12px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "expo.out" }, 40.56);
+    tl.fromTo("#in-t-sub", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power4.out" }, 41.14);
+    tl.to("#in-title", { opacity: 0, filter: "blur(10px)", duration: 0.3, ease: "power2.in" }, 44.34);
+
+    window.__timelines["intro"] = tl;
+  </script>
+</template>
